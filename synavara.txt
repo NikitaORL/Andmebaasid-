@@ -1,0 +1,12 @@
+Andmebaaside haldus - администрирование баз данных
+Andmebaasi haldus süsteem - система управлления базами данных 
+veerg - столбец
+Rida -  строчка 
+Päring - запрос
+Loo - создать
+Laadi alla - загрузить 
+Rakendus - приложение 
+Varundamine - резервное копирование
+Taastamine - восстановление
+Päringukeel -  язык запроса
+Relatsiooni andmebaas -  реалиционные базы данных
