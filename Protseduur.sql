@@ -63,3 +63,21 @@ WHERE linnNimi LIKE @taht + '%';
 END;
 --kutse
 EXEC linnaotsing T;
+
+--------------------------------------------------------------------------------------------------------------------------
+Kasutamine XAMPP / localhost
+
+Create database protseduurOrlenko;
+use protseduurOrlenko;
+
+create table linn(
+linnId int Primary Key AUTO_ICREMENT,
+linnNimi varchar(30),
+rahvaArv int)
+
+insert into linn (linnNimi, rahvaArv)
+values 
+('Tallinn', 440000),
+('Narva', 53000),
+('Tartu', 95000)
+
