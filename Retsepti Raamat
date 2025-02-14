@@ -1,0 +1,200 @@
+SQL CODE:
+Create database retseptiRaamatOrlenko;
+use retseptiRaamatOrlenko;
+
+create table kasutaja(
+kasutaja_id int primary key identity(1,1),
+eesnimi varchar(50),
+perenimi varchar(50) not null,
+email varchar(150));
+
+INSERT INTO kasutaja(eesnimi,perenimi, email)
+VALUES('Nikita', 'Orlenko', 'nikita.orlenko@gmail.com'),
+('Artem', 'Orlenko', 'artem.orlenko@gmail.com'),('Vlad', 'Usikov', 'vlad.usik@gmail.com'),
+('Habib', 'Nurmogomedov', 'habib.mma@gmail.com'),('Justin', 'Gaethje', 'justin.gaethje@gmail.com');
+SELECT * FROM kasutaja
+
+CREATE TABLE kategootia(
+kategooria_id int primary key identity(1,1),
+kategooria_nimi varchar(50)
+)
+INSERT INTO kategootia(kategooria_nimi)
+VALUES('Supp'),('Makaronnid'), ('Salat'), ('Porg'), ('Kurk');
+SELECT * FROM kategootia
+
+CREATE TABLE toiduaine(
+toiduaine_id int primary key identity(1,1),
+toiduaine_nimi varchar(100)
+)
+
+INSERT INTO toiduaine(toiduaine_nimi)
+VALUES('veiseliha'), ('porgand'), ('sibul'), ('kartul'), ('tomat');
+SELECT * FROM toiduaine
+
+CREATE TABLE yhik(
+yhik_id int primary key identity(1,1),
+yhik_nimi varchar(100)
+)
+INSERT INTO yhik(yhik_nimi)
+VALUES('kg'), ('tl'), ('sl'), ('g'), ('ml');
+SELECT * FROM yhik
+
+CREATE TABLE Retsept(
+retsept_id int primary key identity(1,1),
+retsept_nimi varchar(100),
+kirjeldus varchar(200),
+juhend varchar(500),
+sisestatud_kp date,
+kasutaja_id int,
+foreign key (kasutaja_id) references kasutaja(kasutaja_id),
+kategooria_id int,
+foreign key (kategooria_id) references kategootia(kategooria_id)
+)
+
+INSERT INTO Retsept(retsept_nimi, kirjeldus, juhend, sisestatud_kp, kasutaja_id, kategooria_id)
+VALUES('Pasta', 'Makoroonid', 'kasuta elekripliit', '2025-12-01', 1, 1), 
+('omlett', 'munad', 'kasuta elekripliit', '2025-07-13', 2, 2),
+('Doshirak', 'Nuudlid', 'kasuta veekeetja', '2008-10-10', 3, 3),
+('Borši', 'köögiviljad', 'kasuta elekripliit', '2011-8-19', 4, 4),
+('kebab', 'liha', 'grill', '2011-9-11', 5, 5);
+
+SELECT * FROM Retsept
+
+CREATE TABLE Koostis(
+koostis_id int primary key identity,
+kogus int,
+retsept_retsept_id int,
+toiduaine_id int,
+yhik_id int,
+FOREIGN KEY (retsept_retsept_id) references retsept(retsept_id),
+FOREIGN KEY (toiduaine_id) references toiduaine(toiduaine_id),
+FOREIGN KEY (yhik_id) references yhik(yhik_id)
+)
+
+INSERT INTO Koostis(kogus, retsept_retsept_id, toiduaine_id, yhik_id)
+VALUES(3, 4, 1, 1),
+(2, 5, 2, 2),
+(1, 3, 3, 4),
+(4, 5, 4, 1);
+SELECT * FROM Koostis
+
+CREATE TABLE Tehtud(
+tehtud_id int primary key identity(1,1),
+tehtud_kp date,
+retsept_id int,
+FOREIGN KEY (retsept_id) references retsept(retsept_id)
+)
+
+INSERT INTO Tehtud(tehtud_kp, retsept_id)
+VALUES('2025-12-03', 1),
+('2025-11-04', 2),
+('2025-09-01', 3),
+('2025-02-13', 4),
+('2025-12-08', 5);
+
+SELECT * FROM Tehtud
+
+
+SELECT * FROM Tehtud
+SELECT * FROM toiduaine
+SELECT * FROM koostis
+SELECT * FROM Retsept
+SELECT * FROM tehtud
+SELECT * FROM yhik
+--Дополнительное задание на свою табличку 
+CREATE TABLE ToitHind(
+toiduaine_id int,
+Hind_id int primary key identity,
+Hind int,
+kehtivusaeg date,
+FOREIGN KEY (toiduaine_id) references toiduaine(toiduaine_id)
+)
+
+SELECT * FROM ToitHind
+----------------------------------------------------------
+FUNKTSIOONID
+use retseptiRaamatOrlenko;
+
+Create procedure AddKasutaja
+@eesnimi varchar(50),
+@perenimi varchar(50),
+@email varchar (150)
+AS
+BEGIN
+insert into kasutaja(eesnimi, perenimi, email)
+values(@eesnimi, @perenimi, @email);
+SELECT * FROM kasutaja
+
+END
+
+EXEC AddKasutaja @eesnimi='Konor', @perenimi='McGregor', @email='konor.mcgregor@gmail.com'
+
+create procedure AddRetsept
+@
+
+
+
+
+create procedure AddKoostis
+@kogus int,
+@retsept_retsept_id int,
+@toiduaine_id int,
+@yhik_id int
+AS
+BEGIN
+INSERT INTO koostis(kogus, retsept_retsept_id, toiduaine_id, yhik_id)
+VALUES (@kogus, @retsept_retsept_id, @toiduaine_id, @yhik_id);
+SELECT * FROM Koostis
+END
+
+EXEC @kogus=5, @retsept_retsept_id=6, @toiduaine_id=6, @yhik_id=6 
+
+
+CREATE PROCEDURE veeruLisaKustutaTabelis
+@valik varchar(20),
+@tabelinimi varchar(20),
+@veerunimi varchar(20),
+@tyyp varchar(20) =null
+
+AS
+BEGIN
+Declare @sqltegevus as varchar(max)
+set @sqltegevus=case
+when @valik='add' then concat('ALTER TABLE ', @tabelinimi, ' ADD ',   @veerunimi, ' ', @tyyp)
+when @valik='drop' then concat('ALTER TABLE ', @tabelinimi, ' DROP COLUMN ',   @veerunimi)
+END;
+print @sqltegevus;
+BEGIN
+EXEC (@sqltegevus);
+END
+END;
+
+EXEC veeruLisaKustutaTabelis @valik='add', @tabelinimi='retsept', @veerunimi='test3', @tyyp='int';
+SELECT * FROM retsept;
+
+EXEC veeruLisaKustutaTabelis @valik='drop', @tabelinimi='retsept', @veerunimi='test3';
+SELECT * FROM retsept;
+
+CREATE PROCEDURE AddToitHind
+@toiduaine_id int,
+@Hind int,
+@kehtivusaeg date
+AS
+BEGIN
+INSERT INTO ToitHind(toiduaine_id, Hind, kehtivusaeg)
+VALUES (@toiduaine_id, @Hind, @kehtivusaeg)
+select* from ToitHind
+end;
+
+EXEC AddToitHind @toiduaine_id = 2, @Hind = 30, @kehtivusaeg = '2025-11-02'
+
+CREATE PROCEDURE DeleteToitHind
+@deleteID int
+AS
+BEGIN
+SELECT * FROM ToitHind
+DELETE FROM ToitHind WHERE toiduaine_id = @deleteID
+END;
+EXEC DeleteToitHind 2;
+
+drop procedure AddToitHind
